@@ -25,7 +25,7 @@ export function Home(): React.ReactNode {
         <p>
           Edit <code>src/App.tsx</code> and save to test HMR
         </p>
-        <Link to="/maps/hello">Go To Map</Link>
+        <Link className="text-blue-300" to="/maps/hello">Go To Map</Link>
       </div>
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
