@@ -1,35 +1,23 @@
-import { useState } from 'react'
-import reactLogo from '../assets/react.svg'
-import viteLogo from '/vite.svg'
-import { Link } from 'react-router-dom'
+import { useCallback } from "react"
+import { useNavigate } from "react-router-dom"
 
 export function Home(): React.ReactNode {
 
-  const [count, setCount] = useState(0)
+  const navigate = useNavigate()
+
+  const onUploadClick: React.MouseEventHandler<HTMLButtonElement> = useCallback(async () => {
+    await new Promise(resolve => setTimeout(resolve, 400))
+    navigate('/maps/hello')
+  }, [navigate])
 
   return (
     <>
+      <header>
+        <h1 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 dark:text-white md:text-5xl lg:text-6xl">CartoHub proto.</h1>
+      </header>
       <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <button onClick={onUploadClick} type="button" className="mb-2 mr-2 rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Upload TIFF</button>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-        <Link className="text-blue-300" to="/maps/hello">Go To Map</Link>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
   )
 }
