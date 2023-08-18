@@ -5,7 +5,7 @@ export function Map(): React.ReactNode {
   const { map_id } = useParams<{ map_id: string }>()
 
   const { isFetching } = useQuery(['map', map_id], async () => {
-    await new Promise(resolve => setTimeout(resolve, 2000))
+    await new Promise(resolve => setTimeout(resolve, 200))
     return { success: true }
   })
 

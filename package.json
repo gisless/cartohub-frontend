@@ -16,6 +16,7 @@
     "react-router-dom": "^6.15.0"
   },
   "devDependencies": {
+    "@aws-sdk/s3-presigned-post": "^3.391.0",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
