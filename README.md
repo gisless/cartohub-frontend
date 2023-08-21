@@ -11,6 +11,8 @@
 - Users can fork other users' maps. While MapWarper had a 1:1 ratio between maps and geo-references, allowing forking makes it possible to have a 1:n ratio between maps and geo-references
 - Mosaic feature, enables what Hinata GIS did with the gaihozu maps, without relying on such external users
 - Geo-reference is just one function. Should we provide plugin-like spatial operations within StepFunctions?
+- gazetteer
+- image recognition
 
 ---
 
