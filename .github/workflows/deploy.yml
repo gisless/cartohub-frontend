@@ -1,0 +1,53 @@
+name: Deploy
+
+on: push
+
+env:
+  ARTOHUB_AWS_ACCID: 222978711607
+  CARTOHUB_AWS_ROLE_NAME: github-actions-cartohub-frontend-deploy
+
+jobs:
+  test:
+    if: github.ref != 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - run: npm ci
+      - run: npm run lint
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    # These permissions are needed to interact with GitHub's OIDC Token endpoint.
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-region: ap-northeast-1
+          role-to-assume: arn:aws:iam::${{ secrets.CARTOHUB_AWS_ACCID }}:role/${{ secrets.CARTOHUB_AWS_ROLE_NAME }}
+
+      - name: Deploy to S3
+        run: aws s3 sync ./dist s3://cartohub-staging-frontend-20230818002854164200000002
