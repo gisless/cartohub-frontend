@@ -137,6 +137,7 @@ export const useGcpCanvas = ({ enabled, color, style }: Options) => {
         map.remove()
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enabled]) // NOTE: no GCPList dependencies to prevent rerender
 
   useEffect(() => {
