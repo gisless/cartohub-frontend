@@ -79,7 +79,14 @@ export function Home(): React.ReactNode {
   return (
     <>
       <header>
-        <h1 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 dark:text-white md:text-5xl lg:text-6xl">CartoHub proto.</h1>
+        <h1 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 dark:text-white md:text-5xl lg:text-6xl">
+          CartoHub prototype
+        </h1>
+        <p className="mb-3 text-gray-500 dark:text-gray-400">
+        CartoHub is the next generation of cloud-optimized geo-referencing communities.<br />
+        You can make geo-reference on uploaded images.<br />
+        CartoHub is on prototyping stage.
+        </p>
       </header>
       { isFetching || <div>
         <input onChange={onFileInputChange} className={'fixed top-[-999px]'} ref={inputRef} type="file" />

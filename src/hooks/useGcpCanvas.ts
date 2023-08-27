@@ -1,14 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import * as maplibre from 'maplibre-gl'
-
+import maplibre from 'maplibre-gl'
+import { StyleSpecification, IControl, Marker, Map, MapMouseEvent } from 'maplibre-gl'
+import * as pmtiles from 'pmtiles';
+const protocol = new pmtiles.Protocol();
+maplibre.addProtocol("pmtiles",protocol.tile);
 
 type Options = {
-  enabled: boolean,
   color: string,
-  style: string | maplibre.StyleSpecification,
+  style: string | StyleSpecification,
 }
 
-class TrashControl implements maplibre.IControl {
+class TrashControl implements IControl {
 
   private onClick: () => void
 
@@ -34,7 +36,7 @@ class TrashControl implements maplibre.IControl {
   onRemove() {}
 }
 
-const renumberMarker = (marker: maplibre.Marker, index: number, selected: boolean) => {
+const renumberMarker = (marker: Marker, index: number, selected: boolean) => {
   const markerElement = marker.getElement()
   const prevNumberElement = markerElement.querySelectorAll('span.__cartohub-marker-number')
   prevNumberElement.forEach((element) => element.remove())
@@ -50,9 +52,9 @@ const renumberMarker = (marker: maplibre.Marker, index: number, selected: boolea
   markerElement.append(numberElement)
 }
 
-export const useGcpCanvas = ({ enabled, color, style }: Options) => {
+export const useGcpCanvas = ({ color, style }: Options) => {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [gcpList, setGcpList] = useState<{marker: maplibre.Marker, selected: boolean, lat: number, lng: number }[]>([])
+  const [gcpList, setGcpList] = useState<{marker: Marker, selected: boolean, lat: number, lng: number }[]>([])
 
   const onDeleteClick = useCallback(() => {
     setGcpList((gcpList) => {
@@ -66,10 +68,10 @@ export const useGcpCanvas = ({ enabled, color, style }: Options) => {
   }, [])
 
   useEffect(() => {
-    let map: maplibre.Map | null = null
+    let map: Map | null = null
 
     const addMarker = (ev: { target: maplibregl.Map, lngLat: { lat: number, lng: number } }) => {
-      const marker = new maplibre.Marker({ color, draggable: true, clickTolerance: 20 })
+      const marker = new Marker({ color, draggable: true, clickTolerance: 20 })
       .setLngLat(ev.lngLat)
       .addTo(ev.target)
 
@@ -104,7 +106,7 @@ export const useGcpCanvas = ({ enabled, color, style }: Options) => {
       return marker
     }
 
-    if(!enabled && containerRef.current) {
+    if(containerRef.current) {
 
       map = new maplibre.Map({
         container: containerRef.current,
@@ -112,7 +114,7 @@ export const useGcpCanvas = ({ enabled, color, style }: Options) => {
       })
         .addControl(new maplibre.NavigationControl({}))
         .addControl(new TrashControl({ onClick: onDeleteClick }))
-        .on('click', (ev: maplibre.MapMouseEvent) => {
+        .on('click', (ev: MapMouseEvent) => {
           const marker = addMarker({ target: ev.target, lngLat: ev.lngLat })
           setGcpList((gcpList) => {
             return [
@@ -138,7 +140,7 @@ export const useGcpCanvas = ({ enabled, color, style }: Options) => {
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [enabled]) // NOTE: no GCPList dependencies to prevent rerender
+  }, []) // NOTE: no GCPList dependencies to prevent rerender
 
   useEffect(() => {
     gcpList.forEach((gcpItem, index) => {
