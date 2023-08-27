@@ -3,6 +3,7 @@ name: Deploy
 on: push
 
 env:
+  MODE: staging
   CARTOHUB_AWS_ACCID: 222978711607
   CARTOHUB_AWS_ROLE_NAME: github-actions-cartohub-frontend-deploy
   CARTOHUB_AWS_FRONTEND_BUCKET_NAME: cartohub-staging-frontend-20230818002854164200000002
@@ -51,4 +52,4 @@ jobs:
           role-to-assume: arn:aws:iam::${{ env.CARTOHUB_AWS_ACCID }}:role/${{ env.CARTOHUB_AWS_ROLE_NAME }}
 
       - name: Deploy to S3
-        run: aws s3 sync ./dist s3://${{ env.CARTOHUB_AWS_FRONTEND_BUCKET_NAME }}
+        run: aws s3 sync ./dist s3://${{ env.CARTOHUB_AWS_FRONTEND_BUCKET_NAME }} --exact-timestamps --delete
