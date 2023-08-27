@@ -3,7 +3,6 @@ name: Deploy
 on: push
 
 env:
-  MODE: staging
   CARTOHUB_AWS_ACCID: 222978711607
   CARTOHUB_AWS_ROLE_NAME: github-actions-cartohub-frontend-deploy
   CARTOHUB_AWS_FRONTEND_BUCKET_NAME: cartohub-staging-frontend-20230818002854164200000002
@@ -23,6 +22,7 @@ jobs:
 
       - run: npm ci
       - run: npm run lint
+      - run: npm run build:staging
 
   deploy:
     if: github.ref == 'refs/heads/main'
@@ -43,7 +43,8 @@ jobs:
 
       - run: npm ci
       - run: npm run lint
-      - run: npm run build
+      # use staging only on prototyping phase
+      - run: npm run build:staging
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
