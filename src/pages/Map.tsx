@@ -4,7 +4,7 @@ import 'maplibre-gl/dist/maplibre-gl.css'
 import { useGcpCanvas } from '../hooks/useGcpCanvas'
 import { StyleSpecification } from 'maplibre-gl'
 import { useQuery } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 const checkTilesStatus = async (url_format: string) => {
   const url = url_format
@@ -28,7 +28,7 @@ export function Map(): React.ReactNode {  const { map_id } = useParams<{ map_id:
   }
   const raw_image_tile_url = import.meta.env.VITE_CARTOHUB_RASTER_TILE_ENDPOINT + `/${map_id}/{z}/{x}/{y}.png`
 
-  const { isFetched, isLoading, data: tileIsReady = false } = useQuery(
+  const { isLoading, data: tileIsReady = false } = useQuery(
     ['tile-status', map_id],
     async () => {
       const result = await checkTilesStatus(raw_image_tile_url)
@@ -82,7 +82,16 @@ export function Map(): React.ReactNode {  const { map_id } = useParams<{ map_id:
 
   const gcpListLength = Math.max(imageGcpList.length, mapGcpList.length)
 
-return <>
+  const onWarpClick = useCallback(() => {
+    alert('warping! [not implemented]')
+  }, [])
+
+  const warpable = useMemo(
+    () => imageGcpList.length > 2 && mapGcpList.length > 2,
+    [imageGcpList.length, mapGcpList.length],
+  )
+
+  return <>
     <dl>
       <dt>Map ID</dt>
       <dd>{ map_id }</dd>
@@ -124,6 +133,17 @@ return <>
             </table>
           </>
         }
+        <button
+        disabled={!warpable}
+          onClick={onWarpClick}
+          type="button"
+          className={
+            warpable ?
+            'mb-2 mr-2 rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800' :
+            'mb-2 mr-2 rounded-lg bg-blue-300 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-300 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'
+          }>
+            Warp
+          </button>
       </div> : 'Please wait a moment and reload.'
     }
 
