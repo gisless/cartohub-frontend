@@ -8,6 +8,7 @@ maplibre.addProtocol("pmtiles",protocol.tile);
 type Options = {
   color: string,
   style: string | StyleSpecification,
+  enabled?: boolean,
 }
 
 class TrashControl implements IControl {
@@ -52,7 +53,7 @@ const renumberMarker = (marker: Marker, index: number, selected: boolean) => {
   markerElement.append(numberElement)
 }
 
-export const useGcpCanvas = ({ color, style }: Options) => {
+export const useGcpCanvas = ({ color, style, enabled = false }: Options) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [gcpList, setGcpList] = useState<{marker: Marker, selected: boolean, lat: number, lng: number }[]>([])
 
@@ -106,7 +107,7 @@ export const useGcpCanvas = ({ color, style }: Options) => {
       return marker
     }
 
-    if(containerRef.current) {
+    if(containerRef.current && enabled) {
 
       map = new maplibre.Map({
         container: containerRef.current,
@@ -140,7 +141,7 @@ export const useGcpCanvas = ({ color, style }: Options) => {
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []) // NOTE: no GCPList dependencies to prevent rerender
+  }, [enabled]) // NOTE: no GCPList dependencies to prevent rerender
 
   useEffect(() => {
     gcpList.forEach((gcpItem, index) => {

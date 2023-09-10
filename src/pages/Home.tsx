@@ -19,23 +19,18 @@ export function Home(): React.ReactNode {
   const navigate = useNavigate()
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const { data: { presignedPosts, map_id } = {}, isFetching } = useQuery(['links', 'upload', 'create'], async () => {
+  const { data: { presignedPosts, map_id } = {}, isFetching, isError } = useQuery(['links', 'upload', 'create'], async () => {
     const url = import.meta.env.VITE_CARTOHUB_API_ENDPOINT + '/links/upload/create'
-    let presignedPosts: LinksUploadCreateResponse['presignedPosts']
-    let map_id: LinksUploadCreateResponse['map_id']
-    try {
-      const linksCreateResp = await fetch(url, { method: 'POST' })
-      if(linksCreateResp.status > 399) {
-        throw new Error('API error')
-      }
-      const { data } = (await linksCreateResp.json()) as { data: LinksUploadCreateResponse }
-      presignedPosts = data.presignedPosts
-      map_id = data.map_id
-      return { presignedPosts, map_id }
-    } catch (error) {
-      return
+    const linksCreateResp = await fetch(url, { method: 'POST' })
+    if(linksCreateResp.status > 399) {
+      throw new Error('API error')
     }
+    const { data } = (await linksCreateResp.json()) as { data: LinksUploadCreateResponse }
+    const presignedPosts = data.presignedPosts
+    const map_id = data.map_id
+    return { presignedPosts, map_id }
   })
+
 
   const onUploadClick: React.MouseEventHandler<HTMLButtonElement> = useCallback(() => {
     const fileInput = inputRef.current
@@ -88,7 +83,8 @@ export function Home(): React.ReactNode {
         CartoHub is on prototyping stage.
         </p>
       </header>
-      { isFetching || <div>
+      { isFetching ? 'loading...' : (
+        isError ? <div>{'API connection error.'}</div> : <div>
         <input onChange={onFileInputChange} className={'fixed top-[-999px]'} ref={inputRef} type="file" />
         <button
           disabled={ isFetching }
@@ -96,7 +92,8 @@ export function Home(): React.ReactNode {
           type="button"
           className={'mb-2 mr-2 rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'
           }>Upload Image</button>
-      </div>}
+      </div>
+      )}
     </>
   )
 }
