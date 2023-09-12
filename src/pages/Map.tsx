@@ -96,7 +96,7 @@ export function Map(): React.ReactNode {  const { map_id } = useParams<{ map_id:
       <dt>Map ID</dt>
       <dd>{ map_id }</dd>
       <dt>Map Tile Status</dt>
-      <dd>{ isReady ? 'Ready' : `Processing...(${count}}` }</dd>
+      <dd>{ isReady ? 'Ready' : `Processing...(${count})` }</dd>
     </dl>
 
     {
@@ -144,7 +144,7 @@ export function Map(): React.ReactNode {  const { map_id } = useParams<{ map_id:
           }>
             Warp
           </button>
-      </div> : 'Please wait a moment and reload.'
+      </div> : 'Please wait a moment.'
     }
 
 
